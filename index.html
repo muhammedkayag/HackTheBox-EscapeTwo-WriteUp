@@ -23,7 +23,8 @@
             background-size: cover; /* Resmi ekran boyutuna göre ayarlar */
             background-position: center; /* Resmi ortalar */
             background-repeat: no-repeat; /* Resmin tekrarlanmasını engeller */
-            background-attachment: fixed; /* Arka planın sabit kalmasını sağlar */
+            /*background-attachment: fixed;*/ /* Arka planın sabit kalmasını sağlar */
+            background-attachment: scroll;
         }
 
         .overlay {
@@ -52,6 +53,7 @@
         
         .photo-container img {
             width: calc(100% - 20px); /* Kenarlarda 20px boşluk bırakır */
+            max-width: 100%;
             height: auto; /* En-boy oranını korur */
             object-fit: cover;
             border-radius: 0; /* Köşe yuvarlamasını kaldırır */
@@ -71,6 +73,7 @@
             padding: 10px;
             border-radius: 5px;
             width: calc(100% - 20px); /* Tam genişlik */
+            max-width: 100%;
             margin: 10px; /* Boşluk ekler */
             overflow-x: auto; /* Yatay kaydırma çubuğu ekler */
         }
