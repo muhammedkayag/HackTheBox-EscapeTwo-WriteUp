@@ -143,7 +143,7 @@
         <p></p>
         <div class="photo-container">
             <img src="pics/et4.png" alt="Image 4">
-            <p>From rustscan output we see that there is mssql service in port 1433. And in these accounts user sa looks like mssql user. To connect mssql service we can use with this command</p>
+            <p>From rustscan output we see that there is mssql service in port 1433. And in these accounts user sa looks like mssql user. To connect mssql service we can use <a href="https://github.com/fortra/impacket/blob/master/examples/mssqlclient.py"> https://github.com/fortra/impacket/blob/master/examples/mssqlclient.py </a> with this command</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>python3 mssqlclient.py sequel.htb/sa:"MSSQLP@ssw0rd!"@10.10.11.51</code></pre></div> 
         </div>
         <div class="photo-container">
